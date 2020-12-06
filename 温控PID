@@ -1,0 +1,63 @@
+typedef struct{
+	int SetPoint;		
+	long SumError;		
+	
+	float P;			
+	float I;			
+	float D;			
+	
+	int LastError;		
+	int PrevError;		
+}PID;
+ 
+
+void PID_Arg_Init(PID* sptr)
+{
+	sptr->SumError = 0;        
+	sptr->LastError = 0;      
+	sptr->PrevError = 0;      
+	sptr->P = 0;              
+	sptr->I = 0;            
+	sptr->D = 0;               
+	                            
+	sptr->SetPoint = 0;			
+}
+
+
+int PID_Contrl(PID* sptr,int NextPoint)
+{
+	register int iError,iIncPid;
+	
+	iError = sptr->SetPoint - NextPoint;	
+	
+	iIncPid = sptr->P * iError				
+			  - sptr->I * sptr->LastError
+			  + sptr->D * sptr->PrevError;
+	
+	/*????  ??????*/
+	sptr->PrevError = sptr->LastError;
+	sptr->LastError = iError;
+	
+	return iIncPid;						
+}
+ 
+int main()
+{
+	int temp = 0;
+	int add = 0;
+ 
+	PID PID_Temp;
+	PID_Arg_Init(&PID_Temp);
+	for(int i = 0;i < 10;i++)
+	{
+		add = PID_Contrl(&PID_Temp,temp);
+		temp += add;
+ 
+		printf("add:%d\n",add);
+		printf("temp:%d\n",temp);
+		printf("PID.tmp:%d\n",PID_Temp.SetPoint);
+		printf("PID.error:%d\n\n",PID_Temp.LastError);
+		
+	}
+   return 0;
+}
